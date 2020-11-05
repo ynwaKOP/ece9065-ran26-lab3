@@ -20,4 +20,19 @@ for (i = 0; i < 5; i++) {
 
 }
 
+
+app.get('/courses', (req, res) => {
+    const classes = [];
+    for (i = 0; i < 5; i++) {
+        let temp = {
+            subject: courses[i].subject,
+            name: courses[i].name,
+        }
+        classes.push(temp);
+    }
+    
+    return res.json(classes);
+    
+});
+
 app.listen(3000, () => console.log(courses));
