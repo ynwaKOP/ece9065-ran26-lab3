@@ -57,4 +57,24 @@ app.get('/courses/:subject', (req, res) => {
     }
 });
 
+
+
+
+// CRUD schdule
+
+
+
+// add new schedule
+app.post('/schedules', (req, res) => {
+    const newName = req.body.name;
+    if (db.has(newName).value()) {
+        return res.status(404).send("already exist");
+    }
+    else {
+        db.set(newName, []).write();
+    }
+
+    return res.json(req.body);
+});
+
 app.listen(3000, () => console.log(courses));
