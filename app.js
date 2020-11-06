@@ -1,7 +1,13 @@
 const express = require('express');
 const app = express();
 
-//const fetch = require("node-fetch");
+app.use(express.json());
+
+const lowdb = require('lowdb');
+const FileSync = require('lowdb/adapters/FileSync');
+
+const adapter = lowdb(new FileSync('db.json'));
+const db = lowdb(adapter);
 
 const data = require('./Lab3-timetable-data.json');
 
@@ -57,6 +63,39 @@ app.get('/courses/:subject', (req, res) => {
     }
 });
 
+
+app.get('/courses/:subject/:code/:component?', (req, res) => {
+    var sub = req.params.subject;
+    var code = req.params.code;
+    var comp = req.params.component;
+    const classes = [];
+    if (sub && code) {
+            if (comp) {
+                console.log('sub+code+comp');
+                for (i = 0; i < 5; i++) {
+                    if (courses[i].subject == sub && courses[i].code == code && courses[i].component == comp) {
+                        classes.push(data[i]);
+                    }
+                }
+            }
+            else {
+                console.log('sub + code');
+                for (i = 0; i < 5; i++) {
+                    if (courses[i].subject == sub && courses[i].code == code) {
+                        classes.push(data[i]);
+                    }
+                }
+            }
+        }
+    
+    if (classes.length > 0) {
+        return res.json(classes);
+    }
+    else {
+        return res.status(404).send("no results");
+    }
+    
+});
 
 
 
