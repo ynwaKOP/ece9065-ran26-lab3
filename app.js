@@ -112,8 +112,37 @@ app.post('/schedules', (req, res) => {
     else {
         db.set(newName, []).write();
     }
-
     return res.json(req.body);
 });
+
+
+// save a list of courses in to the schedule
+app.post('/schedules/:name', (req, res) => {
+    const nm = req.params.name;
+    const subs = req.body.subject;
+    const codes = req.body.code;
+    if (!db.has(nm).value()) {
+        return res.status(404).send("schedule does not exist");
+    }
+    else {
+        for (i = 0; i < subs.length; i++) {
+            db.get(nm)
+                .push({
+                    subject: subs[i],
+                    code: codes[i]
+                })
+                .write();
+        }
+        return res.json(req.body);
+         //db.get(nm)
+        //.find({subject: sub, code: code}).
+        //assign({subject: newSub, code: newCode}).write()
+    }
+    
+});
+
+
+
+
 
 app.listen(3000, () => console.log(courses));
