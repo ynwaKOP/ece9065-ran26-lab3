@@ -35,4 +35,26 @@ app.get('/courses', (req, res) => {
     
 });
 
+
+app.get('/courses/:subject', (req, res) => {
+    var sub = req.params.subject;
+    const codes = [];
+    if (sub) {
+        for (i = 0; i < 5; i++) {
+            if (courses[i].subject == sub) {
+                codes.push( {
+                    course_code : courses[i].code
+                });
+            }
+        }
+
+    }
+    if (codes.length > 0) {
+        return res.json(codes);
+    }
+    else {
+        return res.status(404).send("no results");
+    }
+});
+
 app.listen(3000, () => console.log(courses));
