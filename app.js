@@ -164,8 +164,21 @@ app.put('/schedules/:name', (req, res) => {
     
 });
 
+// delete a shedule by name
+app.delete('/schedules/:name', (req, res) => {
+    const nm = req.params.name;
+    if (!db.has(nm)) {
+        return res.status(404).send(`no schedule named ${nm} found`);
+    }
+    else {
+        const obj = db.get(nm).value();
+        db.unset(nm).write();
 
+        return res.json(obj);
+        
+    }
 
+});
 
 
 app.listen(3000, () => console.log(courses));
