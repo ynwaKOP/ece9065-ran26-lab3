@@ -141,6 +141,29 @@ app.post('/schedules/:name', (req, res) => {
     
 });
 
+// make it easy, just reaplce/update all
+app.put('/schedules/:name', (req, res) => {
+    const nm = req.params.name;
+    const subs = req.body.subject;
+    const codes = req.body.code;
+    if (!db.has(nm).value()) {
+        return res.status(404).send("schedule does not exist");
+    }
+    else {
+        db.set(nm, []).write();
+        for (i = 0; i < subs.length; i++) {
+            db.get(nm)
+              .push({
+                    subject: subs[i],
+                    code: codes[i]
+                })
+                 .write();
+        }
+        return res.json(req.body);
+    }
+    
+});
+
 
 
 
