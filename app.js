@@ -181,4 +181,22 @@ app.delete('/schedules/:name', (req, res) => {
 });
 
 
+//get schedule + number of courses
+app.get('/schedulelist', (req, res) => {
+    const classes = [];
+
+    const allSchedules = require('./db.json');
+
+    for (var sche in allSchedules) {
+        classes.push({
+            schedule: sche,
+            numberOfCourses: db.get(sche).size()
+
+        });
+    }
+    
+    return res.json(classes);
+});
+
+
 app.listen(3000, () => console.log(courses));
