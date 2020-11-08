@@ -1,7 +1,10 @@
 
+const awsurl = 'http://localhost:3000/'
+// get all courses
 const btt = document.getElementById('list');
+
 function getAll() {
-  fetch('http://localhost:3000/courses')
+  fetch(awsurl + 'courses')
   .then(res => res.json())
   .then(json => {
     json.forEach(item => {
@@ -32,7 +35,7 @@ function getCourses(url) {
 
 go1.addEventListener('click', function() {
   var name = sub1.value;
-  const url = 'http://localhost:3000/courses/' + name;
+  const url = awsurl+ 'courses/' + name;
   console.log(url);
   getCourses(url);
 });
@@ -58,7 +61,8 @@ go2.addEventListener('click', function() {
   var name = sub2.value;
   var code = code1.value;
   var comp = comp1.value;
-  const url = 'http://localhost:3000/courses/' + name + "/" + code + "/" + comp;
+  
+  const url = awsurl + 'courses/' + name + "/" + code + "/" + comp;
   console.log(url);
   searchCourses(url);
 });
@@ -69,7 +73,7 @@ const bAdd = document.getElementById("add");
 
 bAdd.addEventListener('click', function() {
   var jsObj = { name:newName.value};
-  const url = 'http://localhost:3000/schedules';
+  const url = awsurl + 'schedules';
   console.log(url);
   addSche(url, jsObj);
 });
@@ -105,7 +109,7 @@ function searchSchedule(url) {
 
 bSearchSche.addEventListener('click', function() {
   var name = scheName.value;
-  const url = 'http://localhost:3000/schedules/' + name;
+  const url = awsurl + 'schedules/' + name;
   console.log(url);
   searchSchedule(url);
 });
@@ -125,13 +129,14 @@ function showSchedules(url) {
 
 
 bALLSchedules.addEventListener('click', function() {
-  const url = 'http://localhost:3000/schedulelist';
+  const url = awsurl + 'schedulelist';
   console.log(url);
   showSchedules(url)
 });
 
 
 // add courses into the schedule
+
 const curSche = document.getElementById("curSche");
 const addSub = document.getElementById("addSubs");
 const addCode = document.getElementById("addCodes");
@@ -143,7 +148,7 @@ bAddCourse.addEventListener('click', function() {
   var sub = addSub.value.split(",");
   var cd = addCode.value.split(",");
   var jsObj = {subject: sub,  code: cd};
-  const url = 'http://localhost:3000/schedules/' + name;
+  const url = awsurl + 'schedules/' + name;
   console.log(url);
   addCourse(url, jsObj);
 });
@@ -164,7 +169,7 @@ bReplace.addEventListener('click', function() {
   var sub = addSub.value.split(",");
   var cd = addCode.value.split(",");
   var jsObj = {subject: sub,  code: cd};
-  const url = 'http://localhost:3000/schedules/' + name;
+  const url = awsurl + 'schedules/' + name;
   console.log(url);
   addCourse(url, jsObj);
 });
@@ -200,7 +205,7 @@ function deleteSche(url) {
 
 bDeleteSche.addEventListener('click', function() {
   var name = deleteName.value;
-  const url = 'http://localhost:3000/schedules/' + name;
+  const url = awsurl + 'schedules/' + name;
   console.log(url);
   deleteSche(url);
 });
@@ -215,7 +220,7 @@ function deleteAllSche(url) {
 };
 
 bdeleteAllSche.addEventListener('click', function() {
-  const url = 'http://localhost:3000/schedulelist'
+  const url = awsurl + 'schedulelist'
   console.log(url);
   deleteAllSche(url);
 });

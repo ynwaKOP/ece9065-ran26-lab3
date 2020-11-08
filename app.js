@@ -1,6 +1,7 @@
 
 const express = require('express');
 const app = express();
+const PORT = 3000;
 
 app.use(express.json());
 //app.use(express.static('static'));
@@ -19,7 +20,7 @@ db.defaults({})
 const data = require('./Lab3-timetable-data.json');
 
 const courses = [];
-for (i = 0; i < 5; i++) {
+for (i = 0; i < data.length; i++) {
     let cur = {
         subject: data[i].subject,
         code: data[i].catalog_nbr,
@@ -43,7 +44,7 @@ for (i = 0; i < 5; i++) {
 // get all subject + code
 app.get('/courses', (req, res) => {
     const classes = [];
-    for (i = 0; i < 5; i++) {
+    for (i = 0; i < courses.length; i++) {
         let temp = {
             subject: courses[i].subject,
             name: courses[i].name,
@@ -60,7 +61,7 @@ app.get('/courses/:subject', (req, res) => {
     var sub = req.params.subject;
     const codes = [];
     if (sub) {
-        for (i = 0; i < 5; i++) {
+        for (i = 0; i < courses.length; i++) {
             if (courses[i].subject == sub) {
                 codes.push( {
                     course_code : courses[i].code
@@ -86,7 +87,7 @@ app.get('/courses/:subject/:code/:component?', (req, res) => {
     if (sub && code) {
             if (comp) {
                 console.log('sub+code+comp');
-                for (i = 0; i < 5; i++) {
+                for (i = 0; i < courses.length; i++) {
                     if (courses[i].subject == sub && courses[i].code == code && courses[i].component == comp) {
                         classes.push(data[i]);
                     }
@@ -94,7 +95,7 @@ app.get('/courses/:subject/:code/:component?', (req, res) => {
             }
             else {
                 console.log('sub + code');
-                for (i = 0; i < 5; i++) {
+                for (i = 0; i < courses.length; i++) {
                     if (courses[i].subject == sub && courses[i].code == code) {
                         classes.push(data[i]);
                     }
@@ -260,4 +261,4 @@ function sanitize(str) {
 
 
 
-app.listen(3000, () => console.log("running"));
+app.listen(PORT, () => console.log("running"));
