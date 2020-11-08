@@ -199,4 +199,18 @@ app.get('/schedulelist', (req, res) => {
 });
 
 
+app.delete('/schedulelist', (req, res) => {
+    
+    const allSchedules = require('./db.json');
+
+    for (var sche in allSchedules) {
+        db.unset(sche).write();
+    }
+    
+    return res.json({
+        delete: "success"
+    });
+
+});
+
 app.listen(3000, () => console.log(courses));
