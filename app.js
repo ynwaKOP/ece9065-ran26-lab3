@@ -1,7 +1,9 @@
+
 const express = require('express');
 const app = express();
 
 app.use(express.json());
+//app.use(express.static('static'));
 
 const lowdb = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
@@ -9,10 +11,14 @@ const FileSync = require('lowdb/adapters/FileSync');
 const adapter = lowdb(new FileSync('db.json'));
 const db = lowdb(adapter);
 
+/*
+db.defaults({})
+  .write();*/
+
+
 const data = require('./Lab3-timetable-data.json');
 
 const courses = [];
-// replace 5 with the real data length
 for (i = 0; i < 5; i++) {
     let cur = {
         subject: data[i].subject,
@@ -26,7 +32,15 @@ for (i = 0; i < 5; i++) {
 
 }
 
+//exports.data = data;
+//exports.courses = courses;
 
+//front end
+//app.use('/courses', express.static('static'));
+
+
+
+// get all subject + code
 app.get('/courses', (req, res) => {
     const classes = [];
     for (i = 0; i < 5; i++) {
@@ -99,50 +113,28 @@ app.get('/courses/:subject/:code/:component?', (req, res) => {
 
 
 
+
 // CRUD schdule
-
-
 
 // add new schedule
 app.post('/schedules', (req, res) => {
+    if (!sanitize(JSON.stringify(req.body))) {
+        return res.status(403).send(" invalid data receiving ")
+    }
     const newName = req.body.name;
+
     if (db.has(newName).value()) {
         return res.status(404).send("already exist");
     }
     else {
         db.set(newName, []).write();
     }
+
     return res.json(req.body);
 });
 
 
-// save a list of courses in to the schedule
 app.post('/schedules/:name', (req, res) => {
-    const nm = req.params.name;
-    const subs = req.body.subject;
-    const codes = req.body.code;
-    if (!db.has(nm).value()) {
-        return res.status(404).send("schedule does not exist");
-    }
-    else {
-        for (i = 0; i < subs.length; i++) {
-            db.get(nm)
-                .push({
-                    subject: subs[i],
-                    code: codes[i]
-                })
-                .write();
-        }
-        return res.json(req.body);
-         //db.get(nm)
-        //.find({subject: sub, code: code}).
-        //assign({subject: newSub, code: newCode}).write()
-    }
-    
-});
-
-// make it easy, just reaplce/update all
-app.put('/schedules/:name', (req, res) => {
     const nm = req.params.name;
     const subs = req.body.subject;
     const codes = req.body.code;
@@ -164,7 +156,53 @@ app.put('/schedules/:name', (req, res) => {
     
 });
 
-// delete a shedule by name
+
+// read schedule
+app.get('/schedules/:name', (req, res) => {
+    const nm = req.params.name;
+    if (!db.has(nm).value()) {
+        console.log("wrong");
+        return res.status(404).send(`no schedule named ${nm}`);
+    } 
+    else {
+        pairs =  db.get(nm).value();
+        return res.json(pairs);
+    }
+});
+
+
+// make it easy, just reaplce all
+app.put('/schedules/:name', (req, res) => {
+    
+    if (!sanitize(JSON.stringify(req.body))) {
+        return res.status(403).send(" invalid data receiving ")
+    }
+    const nm = req.params.name;
+    const subs= req.body.subject;
+    const codes = req.body.code;
+    
+    if (!db.has(nm).value()) {
+        return res.status(404).send("schedule does not exist");
+    }
+    else {
+        db.set(nm, []).write();
+        for (i = 0; i < subs.length; i++) {
+            db.get(nm)
+              .push({
+                    subject: subs[i],
+                    code: codes[i]
+                })
+                 .write();
+        }
+        return res.json(req.body);
+
+    }
+       
+        
+    
+});
+
+
 app.delete('/schedules/:name', (req, res) => {
     const nm = req.params.name;
     if (!db.has(nm)) {
@@ -181,7 +219,6 @@ app.delete('/schedules/:name', (req, res) => {
 });
 
 
-//get schedule + number of courses
 app.get('/schedulelist', (req, res) => {
     const classes = [];
 
@@ -189,29 +226,13 @@ app.get('/schedulelist', (req, res) => {
 
     for (var sche in allSchedules) {
         classes.push({
-            schedule: sche,
+            name: sche,
             numberOfCourses: db.get(sche).size()
 
         });
     }
     
     return res.json(classes);
-});
-
-//delete scheudle by name
-app.delete('/schedules/:name', (req, res) => {
-    const nm = req.params.name;
-    if (!db.has(nm)) {
-        return res.status(404).send(`no schedule named ${nm} found`);
-    }
-    else {
-        const obj = db.get(nm).value();
-        db.unset(nm).write();
-
-        return res.json(obj);
-        
-    }
-
 });
 
 app.delete('/schedulelist', (req, res) => {
@@ -228,4 +249,15 @@ app.delete('/schedulelist', (req, res) => {
 
 });
 
-app.listen(3000, () => console.log(courses));
+function sanitize(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
+
+
+
+app.listen(3000, () => console.log("running"));
