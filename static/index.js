@@ -1,5 +1,5 @@
 
-const awsurl = 'http://localhost:3000/'
+const awsurl = 'ec2-52-90-188-253.compute-1.amazonaws.com:3000/'
 // get all courses
 const btt = document.getElementById('list');
 
